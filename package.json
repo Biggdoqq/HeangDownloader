@@ -1,0 +1,91 @@
+{
+  "name": "hongguo-downloader-desktop",
+  "version": "1.0.6",
+  "description": "HongguoDL Short-Drama Harvester - Download short-dramas and covers in 1080p",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "build": "electron-builder --win",
+    "dist": "electron-builder --win --x64"
+  },
+  "keywords": [
+    "hongguo",
+    "downloader",
+    "short-drama",
+    "electron",
+    "video-downloader"
+  ],
+  "author": "Antigravity",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Biggdoqq/HeangDownloader.git"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.hongguo.downloader",
+    "productName": "Hongguo Downloader",
+    "copyright": "Copyright © 2026",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Biggdoqq",
+        "repo": "HeangDownloader"
+      }
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "icon.ico",
+      "icon.png",
+      "!engine/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "engine",
+        "to": "engine",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Hongguo Downloader",
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico",
+      "artifactName": "Hongguo-Downloader-Setup-${version}.${ext}"
+    }
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.9"
+  }
+}

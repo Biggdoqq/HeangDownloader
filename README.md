@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/32570251/README.md)
 # Hongguo Downloader (HeangDownloader)
 
 A high-performance desktop application for searching, previewing, and batch-downloading Hongguo short-dramas in 1080p full resolution.

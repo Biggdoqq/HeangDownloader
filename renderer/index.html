@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>HongguoDL SHORT-DRAMA HARVESTER</title>
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient background glow effect -->
+  <div class="ambient-glow" aria-hidden="true">
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+  </div>
+
+  <div class="app-layout">
+    <!-- Custom Frameless Titlebar -->
+    <header class="titlebar" id="titlebar">
+      <div class="titlebar-left">
+        <!-- macOS traffic lights -->
+        <div class="window-controls">
+          <button class="win-btn close" id="btnClose" title="Close" aria-label="Close"></button>
+          <button class="win-btn min" id="btnMin" title="Minimize" aria-label="Minimize"></button>
+          <button class="win-btn max" id="btnMax" title="Maximize" aria-label="Maximize"></button>
+        </div>
+
+        <!-- Logo & Branding -->
+        <div class="brand">
+          <img class="brand-logo-img" src="icon.png" alt="HongguoDL Logo">
+          <div class="brand-text">
+            <span class="brand-name">HongguoDL</span>
+            <span class="brand-tag">SHORT-DRAMA HARVESTER</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center Creator Badge -->
+      <div class="titlebar-center">
+        <a class="creator-badge" id="creatorBadge" href="https://github.com/Biggdoqq" target="_blank" title="អ្នកបង្កើតកម្មវិធី: Biggdoqq (ចុចដើម្បីមើល GitHub)">
+          <div class="creator-avatar-wrap">
+            <svg class="creator-code-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+          </div>
+          <span class="creator-prefix">បង្កើតដោយ</span>
+          <span class="creator-name">Biggdoqq</span>
+          <span class="creator-sparkle">✦</span>
+        </a>
+      </div>
+
+      <div class="titlebar-right">
+        <button class="update-check-btn" id="btnCheckUpdate" title="ពិនិត្យមើលកំណែថ្មី (Check for Updates)">
+          <svg class="update-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+          </svg>
+          <span class="version-label" id="appVersionLabel">v1.0.0</span>
+          <span class="update-dot hidden" id="updateIndicatorDot"></span>
+        </button>
+        <div class="license-badge" id="licenseBadge" title="License Status">
+          <span class="pulse-dot"></span>
+          <span class="license-text">LICENSE · 1087D 14:14:31</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Update Notification Banner (Hidden by default) -->
+    <div class="update-banner hidden" id="updateBanner">
+      <div class="update-banner-left">
+        <div class="update-banner-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+        </div>
+        <div class="update-banner-info">
+          <div class="update-banner-title" id="updateBannerTitle">🚀 មានកំណែថ្មីត្រូវបានបញ្ចេញ!</div>
+          <div class="update-banner-desc" id="updateBannerDesc">ចុចទាញយកដើម្បីធ្វើបច្ចុប្បន្នភាព និងទទួលបានមុខងារថ្មីៗ</div>
+          <div class="update-progress-wrap hidden" id="updateProgressWrap">
+            <div class="update-progress-track">
+              <div class="update-progress-fill" id="updateProgressFill" style="width: 0%"></div>
+            </div>
+            <span class="update-progress-text" id="updateProgressText">0%</span>
+          </div>
+        </div>
+      </div>
+      <div class="update-banner-actions">
+        <button class="btn-update-action" id="btnUpdateAction">ទាញយកឥឡូវនេះ</button>
+        <button class="btn-update-dismiss" id="btnUpdateDismiss" title="បិទ">✕</button>
+      </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="main-content">
+      <!-- Top Search & Queue Section -->
+      <section class="search-section">
+        <div class="omni-search-bar">
+          <div class="search-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+
+          <input 
+            type="text" 
+            id="searchInput" 
+            class="search-input" 
+            placeholder="Search a title, or paste a 《剧名》 / novelquickapp.com / hongguoduanju.com link"
+            autocomplete="off"
+            spellcheck="false"
+          >
+
+          <button class="btn-go" id="btnGo" title="Start Search / Resolve Link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span>Go</span>
+          </button>
+
+          <button class="btn-library" id="btnToggleLibrary" title="View Downloaded Library">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            <span>Library</span>
+          </button>
+
+          <button class="btn-queue" id="btnToggleQueue" title="View Download Queue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            <span>Queue</span>
+            <span class="queue-badge" id="queueCount">0</span>
+          </button>
+        </div>
+
+        <div class="search-subtext">
+          Browse dramas — click a card, or paste a URL above.
+        </div>
+      </section>
+
+      <!-- Real-time Catalog Toolbar: Stats, Sort & Genre Chips -->
+      <section class="catalog-toolbar" id="catalogToolbar">
+        <div class="catalog-meta-row">
+          <div class="catalog-live-badge" id="catalogLiveBadge">
+            <span class="live-dot"></span>
+            <span id="catalogStatText">⚡ 49,500+ Dramas Live</span>
+          </div>
+
+          <div class="catalog-controls">
+            <label for="sortSelect" class="catalog-sort-label">Sort:</label>
+            <select id="sortSelect" class="catalog-sort-select">
+              <option value="hot">🔥 Most Popular</option>
+              <option value="score">★ Highest Rated</option>
+              <option value="new">✨ Newest Added</option>
+              <option value="episodes">🎬 Most Episodes</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Horizontal scrollable genre chips -->
+        <div class="genre-chips-container" id="genreChipsContainer">
+          <div class="genre-chips-scroll" id="genreChipsScroll">
+            <button class="genre-chip active" data-genre="">All Genres</button>
+            <!-- Dynamically populated from API -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Drama Cards Grid Area -->
+      <section class="drama-grid-container" id="dramaGridContainer">
+        <div class="drama-grid" id="dramaGrid">
+          <!-- Dynamically populated poster cards -->
+        </div>
+
+        <!-- Infinite Scroll Sentinel -->
+        <div class="scroll-sentinel" id="scrollSentinel" style="display: none;">
+          <div class="sentinel-spinner"></div>
+          <span class="sentinel-text">Loading more dramas...</span>
+        </div>
+
+        <!-- Empty & Loading State -->
+        <div class="grid-loading" id="gridLoading" style="display: none;">
+          <div class="spinner"></div>
+          <p>Loading dramas from Hongguo live catalog...</p>
+        </div>
+
+        <div class="grid-empty" id="gridEmpty" style="display: none;">
+          <p>No dramas found matching your criteria. Try searching a different keyword or paste a link.</p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Floating Bottom Action Dock -->
+    <footer class="floating-dock" id="floatingDock">
+      <div class="dock-segment dock-status">
+        <span class="status-indicator-dot ready" id="statusDot"></span>
+        <span class="status-label" id="statusText">Ready ✓</span>
+      </div>
+
+      <div class="dock-divider"></div>
+
+      <!-- Output Directory Picker -->
+      <div class="dock-segment dock-folder" id="btnPickFolder" title="Click to change download location">
+        <svg class="dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span class="folder-path" id="folderPathDisplay">...sers\heang\Videos\Hongguo</span>
+      </div>
+
+      <div class="dock-divider"></div>
+
+      <!-- Quality Selector -->
+      <div class="dock-segment dock-quality">
+        <label for="qualitySelect" class="dock-label">Quality</label>
+        <select id="qualitySelect" class="dock-select">
+          <option value="1080p" selected>1080p</option>
+          <option value="720p">720p</option>
+          <option value="540p">540p</option>
+        </select>
+      </div>
+
+      <div class="dock-divider"></div>
+
+      <!-- Episodes Range Selector -->
+      <div class="dock-segment dock-episodes">
+        <label class="dock-label">Episodes</label>
+        <div class="episodes-stepper">
+          <button class="step-btn" id="btnStepDown" title="Decrease range">−</button>
+          <input type="text" id="episodesRangeInput" class="episodes-input" value="all" title="Type 'all' or ranges like '1-10', '1,3,5'">
+          <button class="step-btn" id="btnStepUp" title="Increase range">+</button>
+        </div>
+      </div>
+
+      <div class="dock-divider"></div>
+
+      <!-- Stop / Pause Button -->
+      <button class="dock-btn-stop" id="btnCancelDownload" title="Stop current download">
+        <span class="stop-icon"></span>
+      </button>
+
+      <!-- Big Download Button -->
+      <button class="dock-btn-download" id="btnStartDownload" title="Start downloading selected drama and cover">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>Download</span>
+      </button>
+    </footer>
+  </div>
+
+  <!-- Detail & Episode Selection Modal -->
+  <div class="modal-backdrop" id="detailModal">
+    <div class="modal-card">
+      <button class="modal-close" id="btnCloseDetail">✕</button>
+      <div class="modal-content" id="detailModalContent">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Queue Drawer -->
+  <aside class="queue-drawer" id="queueDrawer">
+    <div class="drawer-header">
+      <h3>Download Queue (<span id="queueDrawerCount">0</span>)</h3>
+      <button class="drawer-close" id="btnCloseQueue">✕</button>
+    </div>
+    <div class="drawer-body" id="queueList">
+      <div class="queue-empty">No dramas in queue. Click any drama card to add or download.</div>
+    </div>
+    <div class="drawer-footer">
+      <button class="btn ghost sm" id="btnOpenDownloadsFolder">📂 Open Downloads Folder</button>
+      <button class="btn primary sm" id="btnStartAllQueue">Download All</button>
+    </div>
+  </aside>
+
+  <!-- Built-in Video Player Modal -->
+  <!-- Built-in High-Definition Video Player Modal -->
+  <div class="player-backdrop" id="playerModal">
+    <div class="player-container">
+      <div class="player-header">
+        <div class="player-header-left">
+          <div class="player-title" id="playerTitle">Episode 1</div>
+          <span class="player-source-tag stream" id="playerSourceTag">🔴 STREAM</span>
+        </div>
+        <div class="player-header-controls">
+          <div class="player-speed-wrap">
+            <span class="speed-label">Speed:</span>
+            <select id="playerSpeedSelect" class="player-speed-select" title="Playback Speed">
+              <option value="1.0" selected>1.0x</option>
+              <option value="1.25">1.25x</option>
+              <option value="1.5">1.5x</option>
+              <option value="2.0">2.0x</option>
+            </select>
+          </div>
+          <button class="player-icon-btn" id="btnPlayerPrev" title="Previous Episode (ភាគមុន)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polygon points="19 20 9 12 19 4 19 20"></polygon>
+              <line x1="5" y1="19" x2="5" y2="5"></line>
+            </svg>
+          </button>
+          <button class="player-icon-btn" id="btnPlayerNext" title="Next Episode (ភាគបន្ទាប់)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polygon points="5 4 15 12 5 20 5 4"></polygon>
+              <line x1="19" y1="5" x2="19" y2="19"></line>
+            </svg>
+          </button>
+          <button class="player-icon-btn" id="btnPlayerFullscreen" title="Toggle Fullscreen (ពេញអេក្រង់)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+            </svg>
+          </button>
+          <button class="modal-close" id="btnClosePlayer" title="បិទ (Close)">✕</button>
+        </div>
+      </div>
+      <div class="video-wrapper">
+        <video id="videoElement" controls autoplay preload="auto"></video>
+        <div class="video-loading-indicator hidden" id="videoLoadingIndicator">
+          <div class="spinner"></div>
+          <span>កំពុងផ្ទុកវីដេអូ...</span>
+        </div>
+      </div>
+      <div class="player-footer">
+        <div class="player-footer-top">
+          <span class="player-episodes-heading">បញ្ជីភាគទាំងអស់ (<span id="playerTotalEpisodesCount">0</span> ភាគ):</span>
+          <div class="player-jump-wrap">
+            <span class="jump-label">លោតទៅភាគ:</span>
+            <input type="number" id="playerJumpInput" class="player-jump-input" min="1" placeholder="1" title="Type episode number and press Enter">
+          </div>
+        </div>
+        <div class="player-episodes-list" id="playerEpisodesList">
+          <!-- Episode buttons injected here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-notice" id="toastNotice"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

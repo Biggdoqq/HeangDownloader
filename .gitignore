@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Production builds & installers
+dist/
+engine/
+
+# Logs and environment
+*.log
+.env
+
+# OS metadata
+.DS_Store
+Thumbs.db
